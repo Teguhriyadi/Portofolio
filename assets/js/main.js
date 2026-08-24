@@ -1,3 +1,9 @@
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import AOS from 'aos';
+import GLightbox from 'glightbox';
+import imagesLoaded from 'imagesloaded';
+import Isotope from 'isotope-layout';
+
 /**
 * Template Name: EasyFolio
 * Template URL: https://bootstrapmade.com/easyfolio-bootstrap-portfolio-template/
@@ -98,66 +104,91 @@
    * Animate the skills items on reveal
    */
   let skillsAnimation = document.querySelectorAll('.skills-animation');
-  skillsAnimation.forEach((item) => {
-    new Waypoint({
-      element: item,
-      offset: '80%',
-      handler: function(direction) {
-        let progress = item.querySelectorAll('.progress .progress-bar');
-        progress.forEach(el => {
-          el.style.width = el.getAttribute('aria-valuenow') + '%';
-        });
-      }
+  if (typeof Waypoint === 'function') {
+    skillsAnimation.forEach((item) => {
+      new Waypoint({
+        element: item,
+        offset: '80%',
+        handler: function() {
+          let progress = item.querySelectorAll('.progress .progress-bar');
+          progress.forEach(el => {
+            el.style.width = el.getAttribute('aria-valuenow') + '%';
+          });
+        }
+      });
     });
+  }
+
+  /**
+   * Normalize portfolio asset URLs so Vite-built hashed images are reused
+   * by the modal and lightbox links.
+   */
+  document.querySelectorAll('.portfolio-card').forEach((portfolioCard) => {
+    const portfolioImage = portfolioCard.querySelector('.portfolio-image img');
+    const previewLink = portfolioCard.querySelector('.preview-link');
+    const detailsLink = portfolioCard.querySelector('.details-link');
+
+    if (!portfolioImage) {
+      return;
+    }
+
+    const imageSource = portfolioImage.getAttribute('src');
+    if (!imageSource) {
+      return;
+    }
+
+    if (previewLink) {
+      previewLink.setAttribute('href', imageSource);
+    }
+
+    if (detailsLink) {
+      detailsLink.setAttribute('data-bs-image', imageSource);
+    }
   });
 
   /**
    * Initiate glightbox
    */
-  if (typeof GLightbox === 'function') {
-    GLightbox({
-      selector: '.glightbox'
-    });
-  }
+  GLightbox({
+    selector: '.glightbox'
+  });
 
   /**
    * Init isotope layout and filters
    */
-  if (typeof imagesLoaded === 'function' && typeof Isotope === 'function') {
-    document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-      let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-      let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-      let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
-      let initIsotope;
-      imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-        initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-          itemSelector: '.isotope-item',
-          layoutMode: layout,
-          filter: filter,
-          sortBy: sort
-        });
+    let initIsotope;
+    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
+        itemSelector: '.isotope-item',
+        layoutMode: layout,
+        filter: filter,
+        sortBy: sort
       });
-
-      isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-        filters.addEventListener('click', function() {
-          isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
-          this.classList.add('filter-active');
-
-          if (initIsotope) {
-            initIsotope.arrange({
-              filter: this.getAttribute('data-filter')
-            });
-          }
-
-          if (typeof aosInit === 'function') {
-            aosInit();
-          }
-        }, false);
-      });
-
     });
-  }
+
+    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
+      filters.addEventListener('click', function() {
+        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+        this.classList.add('filter-active');
+
+        if (initIsotope) {
+          initIsotope.arrange({
+            filter: this.getAttribute('data-filter')
+          });
+        }
+
+        if (typeof aosInit === 'function') {
+          aosInit();
+        }
+      }, false);
+    });
+
+  });
 
   /**
    * Init swiper sliders

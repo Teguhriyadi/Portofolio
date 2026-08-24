@@ -540,6 +540,12 @@
   transition: transform 0.3s ease;
 }
 
+.skill-icon-image {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
 .skill-item-modern:hover .skill-icon-box {
   transform: rotate(10deg);
 }
@@ -926,7 +932,9 @@
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 600;
-  white-space: nowrap;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .badge-period {
@@ -976,7 +984,9 @@
   }
   .exp-meta {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }
 
