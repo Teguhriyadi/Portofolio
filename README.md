@@ -50,6 +50,7 @@ Portfolio ini dikembangkan menggunakan beberapa teknologi berikut:
 - Laravel
 - PHP
 - Node.js
+- Nest.js
 - Express.js
 
 ### Database
